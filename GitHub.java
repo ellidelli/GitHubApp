@@ -164,14 +164,13 @@ public class GitHub extends JFrame {
             //make local project a git repo
 
             //make online github repo
-
-            //link the 2 repos together
-
-            //push an initial commit
-
-            //get the link of the github project
             String githubUrl = "Replace me with the actual link :)";
 
+            //link the 2 repos together
+            gitSubprocessClient.gitRemoteAdd("origin", githubUrl);
+
+            //push an initial commit
+            initialCommit(gitSubprocessClient);
             return githubUrl;
         }
         return "One or more fields empty!";
@@ -210,6 +209,19 @@ public class GitHub extends JFrame {
             System.out.println(e.toString());
             System.exit(1);
         }
+    }
+
+    /**
+     * A method used to perform all of the commands to achieve an initial commit to GitHub. The
+     * local project and GitHub repo must be connected in order for this to work.
+     * 
+     * @param consoleClient client to make all of the Git commands
+     * @author Jacob Hogrefe
+     */
+    public static void initialCommit(GitSubprocessClient consoleClient) {
+        consoleClient.gitAddAll();
+        consoleClient.gitCommit("initial commit");
+        consoleClient.gitPush("master");
     }
 }
 

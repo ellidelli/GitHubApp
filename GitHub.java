@@ -1,4 +1,5 @@
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -9,13 +10,24 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
+import git.tools.client.GitSubprocessClient;
+import github.tools.client.GitHubApiClient;
+
 // import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public class GitHub extends JFrame {
+
+    private static String[] gitIgnoreItems = new String[] {".classpath", 
+    ".project", ".settings", "bin/", ".settings", ".DS_Store", ".vscode", "settings.json" };
+
     public static void main (String[] args) {
+
         JFrame frame = new JFrame("GitHub App");
 
         //create panel
@@ -67,12 +79,12 @@ public class GitHub extends JFrame {
             //TODO: set this input to the repo name
         JCheckBox privateCheckbox = new JCheckBox("Private");
             //TODO add private command
-        JCheckBox publicCheckBox = new JCheckBox("Public");
-            publicCheckBox.setSelected(true);
+        JCheckBox publicCheckbox = new JCheckBox("Public");
+            publicCheckbox.setSelected(true);
             //TODO: add public command
         ButtonGroup buttonGroup = new ButtonGroup();
             buttonGroup.add(privateCheckbox);
-            buttonGroup.add(publicCheckBox);
+            buttonGroup.add(publicCheckbox);
         JLabel userLabel = new JLabel("User:");
         JTextField userInput = new JTextField();
             //TODO: set to user 
@@ -82,15 +94,20 @@ public class GitHub extends JFrame {
         JButton create = new JButton("Create Repo");
             //TODO: add repo create command
             //TODO: link repo to local project
-        JButton commit = new JButton("Push Initital Commit");
-            //TODO: add initial commit command
-            //TODO: make sure to add a .gitignore file to the filepath before adding, committing, pushing
-            //TODO: add a README.md file with the repo name as a title (##)
+        
         JLabel repoURL = new JLabel("Repo url:");
             repoURL.setForeground(Color.white);
         JTextField url = new JTextField(" ");
             url.setEditable(false);
-            //TODO: make this display the new url when it is created
+        create.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String githubRepoUrl = createRepo(fpInput.getText(), repoInput.getText(), userInput.getText(), tokenInput.getText(), privateCheckbox.isEnabled());
+                url.setText(githubRepoUrl);
+            }
+
+        });
 
         //panel adds
         topPanel.add(QULabel);
@@ -100,14 +117,14 @@ public class GitHub extends JFrame {
         panel.add(fpInput);
         panel.add(repoLabel);
         panel.add(repoInput);
-        panel.add(publicCheckBox);
+        panel.add(publicCheckbox);
         panel.add(privateCheckbox);
         panel.add(userLabel);
         panel.add(userInput);
         panel.add(tokenLabel);
         panel.add(tokenInput);
+        panel.add(Box.createHorizontalStrut(0));
         panel.add(create);
-        panel.add(commit);
         bottomPanel.add(repoURL);
         bottomPanel.add(url);
 
@@ -119,6 +136,80 @@ public class GitHub extends JFrame {
         frame.pack();
         frame.setResizable(false);
         frame.setVisible(true);
+    }
+
+    /**
+     * The method called by the "Create Repo" button. Handles the data given to the program.
+     * Each process should have it's own separate function
+     * 
+     * @param filePath the path of the project
+     * @param repoName the name of the GitHub repo
+     * @param username the user's username
+     * @param token the API token of the user
+     * @param privateRepo whether or not the repo is private
+     */
+    public static String createRepo(String filePath, String repoName, String username, String token, boolean privateRepo) {
+        //checks if any of the fields are empty and won't continue until it's resolved
+        if (!(filePath.equalsIgnoreCase("") || 
+            repoName.equalsIgnoreCase("") || 
+            username.equalsIgnoreCase("") || 
+            token.equalsIgnoreCase(""))) {
+            //Subprocess and API initialization
+            GitSubprocessClient gitSubprocessClient = new GitSubprocessClient(filePath);
+            GitHubApiClient gitHubApiClient = new GitHubApiClient(username, token);
+
+            //adds the gitignore and readme files to local project
+            addGitFiles(filePath, repoName);
+            
+            //make local project a git repo
+
+            //make online github repo
+
+            //link the 2 repos together
+
+            //push an initial commit
+
+            //get the link of the github project
+            String githubUrl = "Replace me with the actual link :)";
+
+            return githubUrl;
+        }
+        return "One or more fields empty!";
+    }
+
+    /**
+     * Adds the .gitignore files and the README.md files to the local project.
+     * 
+     * @param filePath the path to make the files
+     * @param repoName the name of the GitHub repo
+     * 
+     * @author Jacob Hogrefe
+     */
+    public static void addGitFiles(String filePath, String repoName) {
+        //create the files at the path of the local repo
+        File gitIgnore = new File(filePath + "/.gitignore");
+        File readme = new File(filePath + "/README.md");
+
+        //write to the files if they exist (they do)
+        try {
+            gitIgnore.createNewFile(); readme.createNewFile();
+            PrintWriter gitWriter = new PrintWriter(new File(filePath + "/.gitignore"));
+            PrintWriter readWriter = new PrintWriter(new File(filePath + "/README.md"));
+
+            //items in .gitignore can be added in the array
+            for (int i = 0; i < gitIgnoreItems.length; i++) {
+                gitWriter.println(gitIgnoreItems[i]);
+            }
+            gitWriter.close();
+            
+            //simple README.md file
+            readWriter.println("## " + repoName);
+            readWriter.println("This is an auto generated README.md file.");
+            readWriter.close();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            System.exit(1);
+        }
     }
 }
 

@@ -12,6 +12,7 @@ import javax.swing.UIManager;
 
 import git.tools.client.GitSubprocessClient;
 import github.tools.client.GitHubApiClient;
+import github.tools.client.RequestParams;
 
 // import javax.swing.*;
 import java.awt.*;
@@ -162,16 +163,20 @@ public class GitHub extends JFrame {
             addGitFiles(filePath, repoName);
             
             //make local project a git repo
+            gitSubprocessClient.gitInit();
 
             //make online github repo
-            String githubUrl = "Replace me with the actual link :)";
+            RequestParams rqParams = new RequestParams();
+            rqParams.addParam("name", repoName);
+            rqParams.addParam("private", privateRepo);
+            gitHubApiClient.createRepo(rqParams);
 
             //link the 2 repos together
-            gitSubprocessClient.gitRemoteAdd("origin", githubUrl);
+            gitSubprocessClient.gitRemoteAdd("origin", "https://www.github.com/" + username + "/" + repoName + ".git");
 
             //push an initial commit
             initialCommit(gitSubprocessClient);
-            return githubUrl;
+            return "https://www.github.com/" + username + "/" + repoName;
         }
         return "One or more fields empty!";
     }

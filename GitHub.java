@@ -104,7 +104,7 @@ public class GitHub extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                String githubRepoUrl = createRepo(fpInput.getText(), repoInput.getText(), userInput.getText(), tokenInput.getText(), privateCheckbox.isEnabled());
+                String githubRepoUrl = createRepo(fpInput.getText(), repoInput.getText(), userInput.getText(), tokenInput.getText(), privateCheckbox.isSelected());
                 url.setText(githubRepoUrl);
             }
 

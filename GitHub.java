@@ -14,7 +14,6 @@ import git.tools.client.GitSubprocessClient;
 import github.tools.client.GitHubApiClient;
 import github.tools.client.RequestParams;
 
-// import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +26,10 @@ public class GitHub extends JFrame {
     private static String[] gitIgnoreItems = new String[] {".classpath", 
     ".project", ".settings", "bin/", ".settings", ".DS_Store", ".vscode", "settings.json" };
 
+    /**
+     * Creates an app GUI
+     * @author Ellie Delea
+     */
     public static void main (String[] args) {
 
         JFrame frame = new JFrame("GitHub App");
@@ -74,27 +77,19 @@ public class GitHub extends JFrame {
             disclaimer.setForeground(Color.white);
         JLabel fpLabel = new JLabel("Project filepath:");
         JTextField fpInput = new JTextField();
-            //TODO: add the gitinit command when there is a filepath in this textfield
         JLabel repoLabel = new JLabel("Repo name:");
         JTextField repoInput = new JTextField();
-            //TODO: set this input to the repo name
         JCheckBox privateCheckbox = new JCheckBox("Private");
-            //TODO add private command
         JCheckBox publicCheckbox = new JCheckBox("Public");
             publicCheckbox.setSelected(true);
-            //TODO: add public command
         ButtonGroup buttonGroup = new ButtonGroup();
             buttonGroup.add(privateCheckbox);
             buttonGroup.add(publicCheckbox);
         JLabel userLabel = new JLabel("User:");
         JTextField userInput = new JTextField();
-            //TODO: set to user 
         JLabel tokenLabel = new JLabel("Token:");
         JTextField tokenInput = new JTextField();
-            //TODO: set to token
         JButton create = new JButton("Create Repo");
-            //TODO: add repo create command
-            //TODO: link repo to local project
         
         JLabel repoURL = new JLabel("Repo url:");
             repoURL.setForeground(Color.white);
@@ -229,12 +224,4 @@ public class GitHub extends JFrame {
         consoleClient.gitPush("master");
     }
 }
-
-
-//Example on GitInit
-// String repoPath = "/Users/elizabethdelea/Desktop/Heyy";
-// GitSubprocessClient gitSubprocessClient = new GitSubprocessClient(repoPath);
-// String gitInit = gitSubprocessClient.gitInit();
-    //debug print
-// System.out.print(gitInit);
 
